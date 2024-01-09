@@ -80,7 +80,6 @@ class PlansViewModel(private val plansRepository: PlansRepository) : ViewModel()
             plansRepository.updatePlansItems(plan.name, plan.planDetailsEntity, plan.id)
             getPlansList()
         }
-
     }
 
     private fun upsertPlans(plansObject: PlansEntity) {

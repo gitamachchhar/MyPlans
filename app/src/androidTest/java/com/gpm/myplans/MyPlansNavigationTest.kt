@@ -13,6 +13,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.gpm.myplans.ui.compose.PlansListNavigation
 import com.gpm.myplans.ui.compose.PlansScreen
+import com.gpm.myplans.viewmodels.ActionEventsViewModel
 import com.gpm.myplans.viewmodels.PlansViewModel
 import org.junit.Assert.*
 import org.junit.Before
@@ -34,7 +35,7 @@ class MyPlansNavigationTest {
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
     private lateinit var navController: TestNavHostController
-
+    private val actionEventsViewModel = ActionEventsViewModel()
 
     @Before
     fun setupPlansListNavHost() {
@@ -61,6 +62,7 @@ class MyPlansNavigationTest {
     @Test
     fun navigateToPlanDetailsScreen() {
         displayAlertDialog()
+        actionEventsViewModel.setEditMenuState(false)
         composeTestRule.onNode(hasTestTag("OK"), useUnmergedTree = true).performClick()
         navController.assertCurrentRouteName(PlansScreen.PlanDetails.name)
     }

@@ -62,6 +62,7 @@ import com.gpm.myplans.viewmodels.PlansViewModel
 import org.koin.androidx.compose.viewModel
 
 private var selectedPlans = mutableListOf<Int>()
+private var isEditActive = false
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -84,8 +85,7 @@ fun PlansListScreen(
     var plans = viewModel.plansDataList.collectAsState()
     var planList by remember { mutableStateOf(plans) }
 
-    var isEditActive = false
-    val context = LocalContext.current
+
     LaunchedEffect(lifecycleEvent) {
         if (lifecycleEvent == Lifecycle.Event.ON_RESUME) {
             viewModel.getPlansList()
@@ -96,7 +96,6 @@ fun PlansListScreen(
         title = stringResource(id = R.string.plans),
         navIcon = R.drawable.lists,
         onEdit = {
-            isEditActive = true
             actionButtonViewModel.setDialogVisibility(true) },
         onDelete = {
             viewModel.deletePlans(viewModel.replacePlanIds(planList.value, selectedPlans))
@@ -142,12 +141,14 @@ fun PlansListScreen(
         if (isDialogVisible.value) {
             AlertDialog(
                 title = stringResource(id = R.string.enter_title),
-                content = stringResource(id = R.string.title)
-                ,onClick = {
-                if (isEditActive) {
+                content = stringResource(id = R.string.title),
+                onClick = {
+                if (actionButtonViewModel.getEditMenuState().value) {
                     val plan = viewModel.getPlan()
                     plan.name = actionButtonViewModel.getDialogText().value
                     viewModel.updatePlanItems(plan)
+                    actionButtonViewModel.setDialogText("")
+                    actionButtonViewModel.resetAllActionButtons(false)
                 } else {
                     viewModel.saveNoteTitle(actionButtonViewModel.getDialogText().value)
                     onNextButtonClicked()
@@ -249,7 +250,7 @@ private fun PlansRowItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .testTag(stringResource(id = R.string.ok))
+            .testTag(stringResource(id = R.string.list_to_details_tag))
             .combinedClickable(onLongClick = {
                 onEnableChange(true)
             }, onClick = {

@@ -35,13 +35,14 @@ class ActionEventsViewModel : ViewModel() {
         return isDialogVisible
     }
 
-    fun setDialogText(isVisible: String) {
-        listItemName.value = isVisible
+    fun setDialogText(text: String) {
+        listItemName.value = text
     }
 
     fun getDialogText() : StateFlow<String> {
         return listItemName
     }
+
     fun resetAllActionButtons(isVisible: Boolean) {
         showEditMenu.value = isVisible
         actionButtonsVisible.value = isVisible
