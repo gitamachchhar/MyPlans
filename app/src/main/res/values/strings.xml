@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">MyPlans</string>
+    <string name="plan_details">PlanDetails</string>
+    <string name="plans">Plans</string>
+    <string name="back_button">Back</string>
+    <string name="item_title">Please enter plan detail</string>
+    <string name="item_name">Item Name</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="new_note">New Note</string>
+    <string name="enter_title">Please enter title</string>
+    <string name="title">Title</string>
+    <string name="selectall">Select All</string>
+    <string name="empty_state_msg">You don\'t have any plans yet, lets make now!</string>
+</resources>
