@@ -1,7 +1,7 @@
 MyPlans app
 =================================
 
-This app contains 2 screens, plans list and plans details. Plan list have title of the plan and details screen can store TODO list.
+This app contains 2 screens, planslist, and plansdetails. The plan list has the plan title and the details screen can store the TODO list.
 
 Compose + Flow + MVVM + Room Database + navigation 
 
