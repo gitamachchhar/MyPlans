@@ -28,6 +28,10 @@ class PlansViewModel(private val plansRepository: PlansRepository) : ViewModel()
     private var noteTitle: String = ""
     private var planEntity = PlansEntity()
 
+    init {
+        getPlansList()
+    }
+
     fun saveNoteTitle(title: String) {
         noteTitle = title
     }
@@ -52,9 +56,6 @@ class PlansViewModel(private val plansRepository: PlansRepository) : ViewModel()
         }
     }
 
-    init {
-        getPlansList()
-    }
 
     fun getPlansList() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -88,7 +89,7 @@ class PlansViewModel(private val plansRepository: PlansRepository) : ViewModel()
         }
     }
 
-    private fun getFormattedDate(): String {
+    fun getFormattedDate(): String {
         return try {
             val formatter = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
             formatter.format(Date())

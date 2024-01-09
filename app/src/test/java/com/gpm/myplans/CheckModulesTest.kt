@@ -35,7 +35,7 @@ class CheckModulesTest : KoinTest {
     }
 
     @After
-    fun tearDown() {
+    fun stopKoinInjection() {
         stopKoin()
     }
 

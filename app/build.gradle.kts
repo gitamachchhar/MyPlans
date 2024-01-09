@@ -117,4 +117,6 @@ dependencies {
     testImplementation("io.insert-koin:koin-test:3.2.1")
     testImplementation ("io.insert-koin:koin-test-junit4:3.2.1")
     testImplementation ("org.robolectric:robolectric:4.6.1")
+    androidTestImplementation ("org.mockito:mockito-core:5.7.0")
+    androidTestImplementation("org.mockito:mockito-android:5.8.0")
 }

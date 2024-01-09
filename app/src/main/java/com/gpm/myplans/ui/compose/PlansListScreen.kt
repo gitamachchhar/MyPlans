@@ -39,7 +39,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -62,7 +61,6 @@ import com.gpm.myplans.viewmodels.PlansViewModel
 import org.koin.androidx.compose.viewModel
 
 private var selectedPlans = mutableListOf<Int>()
-private var isEditActive = false
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -151,8 +149,10 @@ fun PlansListScreen(
                     actionButtonViewModel.resetAllActionButtons(false)
                 } else {
                     viewModel.saveNoteTitle(actionButtonViewModel.getDialogText().value)
+                    actionButtonViewModel.setDialogText("")
                     onNextButtonClicked()
                 }
+
             })
         }
     }
@@ -252,6 +252,8 @@ private fun PlansRowItem(
             .fillMaxWidth()
             .testTag(stringResource(id = R.string.list_to_details_tag))
             .combinedClickable(onLongClick = {
+                viewModel.saveNoteTitle(plan.name)
+                viewModel.setPlan(plan)
                 onEnableChange(true)
             }, onClick = {
                 viewModel.saveNoteTitle(plan.name)
@@ -275,7 +277,6 @@ private fun PlansRowItem(
         ) {
 
             if (isEnabled) {
-                viewModel.setPlan(plan)
                 Checkbox(
                     checked = selectedItem, onCheckedChange = null, modifier = Modifier
                         .padding(10.dp)
