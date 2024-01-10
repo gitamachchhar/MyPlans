@@ -223,6 +223,7 @@ private fun PlansList(
 
                         if (selectedItems.isEmpty()) {
                             selectAll = false
+isEnabled = false
                         } else if (selectedItems.size == list.size) selectAll = true
 
                         actionButtonViewModel.setEditMenuState(selectedItems.size == 1)
