@@ -171,6 +171,7 @@ private fun PlansDetailsList(
                         selectAll = it
                         isEnabled = it
                         actionButtonViewModel.setSelectDeleteMenusState(it)
+                        actionButtonViewModel.setEditMenuState(false)
                     },
                     role = Role.Checkbox
                 )
