@@ -189,7 +189,6 @@ private fun PlansDetailsList(
             if (list.isNotEmpty()) {
                 itemsIndexed(list) {index, it ->
                     PlansDetailsRowItem(it,
-                        actionButtonViewModel,
                         isEnabled = isEnabled,
                         selectedItem = selectedItems.contains(index),
                         onClick = {
@@ -199,6 +198,7 @@ private fun PlansDetailsList(
 
                             if (selectedItems.isEmpty()) {
                                 selectAll = false
+                                isEnabled = false
                             } else if (selectedItems.size == list.size) selectAll = true
 
                             selectedItemIds = selectedItems.toMutableList()
@@ -219,7 +219,6 @@ private fun PlansDetailsList(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PlansDetailsRowItem(plan: PlanDetailsEntity,
-                        actionButtonViewModel : ActionEventsViewModel,
                         isEnabled: Boolean = false,
                         onEnableChange: (Boolean) -> Unit,
                         selectedItem: Boolean,

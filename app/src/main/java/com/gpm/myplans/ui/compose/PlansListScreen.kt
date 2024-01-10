@@ -156,7 +156,6 @@ fun PlansListScreen(
             })
         }
     }
-
 }
 
 @Composable
@@ -223,7 +222,10 @@ private fun PlansList(
 
                         if (selectedItems.isEmpty()) {
                             selectAll = false
-                        } else if (selectedItems.size == list.size) selectAll = true
+                            isEnabled = false
+                        } else if (selectedItems.size == list.size) {
+                            selectAll = true
+                        }
 
                         actionButtonViewModel.setEditMenuState(selectedItems.size == 1)
                         actionButtonViewModel.setSelectDeleteMenusState(selectedItems.isNotEmpty())
