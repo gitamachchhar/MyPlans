@@ -199,6 +199,7 @@ private fun PlansDetailsList(
 
                             if (selectedItems.isEmpty()) {
                                 selectAll = false
+isEnabled = false
                             } else if (selectedItems.size == list.size) selectAll = true
 
                             selectedItemIds = selectedItems.toMutableList()
