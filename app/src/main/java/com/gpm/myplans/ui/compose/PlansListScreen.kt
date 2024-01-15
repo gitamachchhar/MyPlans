@@ -58,6 +58,9 @@ import com.gpm.myplans.ui.theme.labelMedium
 import com.gpm.myplans.ui.theme.labelSmall
 import com.gpm.myplans.viewmodels.ActionEventsViewModel
 import com.gpm.myplans.viewmodels.PlansViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.viewModel
 
 private var selectedPlans = mutableListOf<Int>()
@@ -82,7 +85,6 @@ fun PlansListScreen(
     var loadingState by remember { mutableStateOf(loading) }
     var plans = viewModel.plansDataList.collectAsState()
     var planList by remember { mutableStateOf(plans) }
-
 
     LaunchedEffect(lifecycleEvent) {
         if (lifecycleEvent == Lifecycle.Event.ON_RESUME) {
@@ -123,7 +125,7 @@ fun PlansListScreen(
                     list = planList.value,
                     onNextButtonClicked = onNextButtonClicked,
                     viewModel = viewModel,
-                    actionButtonViewModel = actionButtonViewModel
+                    actionButtonViewModel = actionButtonViewModel,
                 )
             } else {
                 EmptyState(
@@ -142,17 +144,21 @@ fun PlansListScreen(
                 content = stringResource(id = R.string.title),
                 onClick = {
                 if (actionButtonViewModel.getEditMenuState().value) {
-                    val plan = viewModel.getPlan()
-                    plan.name = actionButtonViewModel.getDialogText().value
-                    viewModel.updatePlanItems(plan)
-                    actionButtonViewModel.setDialogText("")
-                    actionButtonViewModel.resetAllActionButtons(false)
+                    CoroutineScope(Dispatchers.Default).launch {
+                        val plan = viewModel.getPlanById(planList.value[selectedPlans[0]].id)
+                        plan.name = actionButtonViewModel.getDialogText().value
+                        viewModel.updatePlanItems(plan)
+                        actionButtonViewModel.run {
+                            setDialogText("")
+                            setItemSelectionState(false)
+                            resetAllActionButtons(false)
+                        }
+                    }
                 } else {
                     viewModel.saveNoteTitle(actionButtonViewModel.getDialogText().value)
                     actionButtonViewModel.setDialogText("")
                     onNextButtonClicked()
                 }
-
             })
         }
     }
@@ -167,9 +173,10 @@ private fun PlansList(
     actionButtonViewModel: ActionEventsViewModel
 ) {
 
-    var isEnabled by remember { mutableStateOf(false) }
     var selectedItems by remember { mutableStateOf<Set<Int>>(emptySet()) }
     var selectAll by remember { mutableStateOf(false) }
+    val isItemSelectionEnabled = actionButtonViewModel.getItemSelectionState().collectAsState()
+    var isEnabled by remember { mutableStateOf(isItemSelectionEnabled) }
 
     LaunchedEffect(key1 = selectAll) {
         selectedItems = if (selectAll)
@@ -180,7 +187,6 @@ private fun PlansList(
         selectedPlans = selectedItems.toMutableList()
     }
     Column {
-
         Row(
             modifier = Modifier
                 .padding(8.dp)
@@ -189,9 +195,11 @@ private fun PlansList(
                     value = selectAll,
                     onValueChange = {
                         selectAll = it
-                        isEnabled = it
-                        actionButtonViewModel.setSelectDeleteMenusState(it)
-                        actionButtonViewModel.setEditMenuState(false)
+                        actionButtonViewModel.run {
+                            setItemSelectionState(it)
+                            setSelectDeleteMenusState(it)
+                            setEditMenuState(false)
+                        }
                     },
                     role = Role.Checkbox
                 )
@@ -209,7 +217,7 @@ private fun PlansList(
                     plan = plan,
                     onNextButtonClicked = onNextButtonClicked,
                     viewModel = viewModel,
-                    isEnabled = isEnabled,
+                    isEnabled = isEnabled.value,
                     selectedItem = selectedItems.contains(index),
                     onClick = {
                         selectedItems =
@@ -222,16 +230,17 @@ private fun PlansList(
 
                         if (selectedItems.isEmpty()) {
                             selectAll = false
-                            isEnabled = false
+                            actionButtonViewModel.setItemSelectionState(false)
                         } else if (selectedItems.size == list.size) {
                             selectAll = true
                         }
-
-                        actionButtonViewModel.setEditMenuState(selectedItems.size == 1)
-                        actionButtonViewModel.setSelectDeleteMenusState(selectedItems.isNotEmpty())
+                        actionButtonViewModel.run {
+                            setEditMenuState(selectedItems.size == 1)
+                            setSelectDeleteMenusState(selectedItems.isNotEmpty())
+                        }
                     },
                     onEnableChange = { value ->
-                        isEnabled = value
+                        actionButtonViewModel.setItemSelectionState(value)
                     }
                 )
             }

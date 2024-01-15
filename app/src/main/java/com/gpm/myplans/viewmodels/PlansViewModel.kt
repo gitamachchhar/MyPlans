@@ -57,6 +57,30 @@ class PlansViewModel(private val plansRepository: PlansRepository) : ViewModel()
     }
 
 
+    suspend fun getPlanById(id: Int) : PlansEntity  {
+        val request = viewModelScope.launch(Dispatchers.IO) {
+            plansRepository.getPlanById(id)
+                .onStart {  _loadingData.update { true } }
+                .onCompletion {  _loadingData.update { false } }
+                .collect {
+                    planEntity = it
+                }
+        }
+        request.join()
+        return planEntity
+    }
+
+    suspend fun removeItemIds(itemList: List<PlanDetailsEntity>, list: List<Int>) : List<PlanDetailsEntity> {
+        val idList = itemList.toMutableList()
+        val request = viewModelScope.launch (Dispatchers.Default) {
+            list.forEach {
+                idList.remove(itemList[it])
+            }
+        }
+        request.join()
+        return idList
+    }
+
     fun getPlansList() {
         viewModelScope.launch(Dispatchers.IO) {
             plansRepository.getPlansData()
@@ -110,16 +134,6 @@ class PlansViewModel(private val plansRepository: PlansRepository) : ViewModel()
         return idList
     }
 
-    suspend fun removeItemIds(itemList: List<PlanDetailsEntity>, list: List<Int>) : List<PlanDetailsEntity> {
-         val idList = itemList.toMutableList()
-         val request = viewModelScope.launch (Dispatchers.Default) {
-            list.forEach {
-                idList.remove(itemList[it])
-            }
-        }
-        request.join()
-        return idList
-    }
 
     fun updateItemList(itemList: List<PlanDetailsEntity>) {
         planEntity.planDetailsEntity = itemList

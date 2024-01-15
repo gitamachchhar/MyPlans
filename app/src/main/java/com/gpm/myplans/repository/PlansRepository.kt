@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface PlansRepository {
     fun getPlansData(): Flow<List<PlansEntity>>
+    fun getPlanById(id: Int): Flow<PlansEntity>
     suspend fun insertPlansData(plansObject: PlansEntity)
     suspend fun updatePlansItems(planName: String, planItems: List<PlanDetailsEntity>, id: Int)
     suspend fun clearPlansData(ids : List<Int>)

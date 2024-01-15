@@ -12,7 +12,8 @@ interface PlansDao {
 
     @Query("SELECT * FROM Plans ORDER BY id DESC")
     fun getPlansData() : List<PlansEntity>
-
+    @Query("SELECT * FROM Plans Where id in (:id)")
+    fun getPlanById(id: Int) : PlansEntity
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlansData(plansData: PlansEntity)
 

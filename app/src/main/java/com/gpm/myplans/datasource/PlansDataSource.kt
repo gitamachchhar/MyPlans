@@ -13,6 +13,10 @@ class PlansDataSource(private val planDao: PlansDao) : PlansRepository {
         emit(planDao.getPlansData())
     }
 
+    override fun getPlanById(id: Int): Flow<PlansEntity> = flow {
+       emit(planDao.getPlanById(id))
+    }
+
     override suspend fun insertPlansData(plansObject: PlansEntity) {
        return planDao.insertPlansData(plansObject)
     }

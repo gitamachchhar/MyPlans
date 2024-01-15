@@ -10,6 +10,15 @@ class ActionEventsViewModel : ViewModel() {
     private var showEditMenu = MutableStateFlow(false)
     private var isDialogVisible = MutableStateFlow(false)
     private var listItemName = MutableStateFlow("")
+    private var itemSelectionState = MutableStateFlow(false)
+
+    fun setItemSelectionState(isActive: Boolean) {
+        itemSelectionState.value = isActive
+    }
+
+    fun getItemSelectionState(): StateFlow<Boolean> {
+        return itemSelectionState
+    }
 
     fun setSelectDeleteMenusState(isActive: Boolean) {
         actionButtonsVisible.value = isActive
