@@ -1,0 +1,6 @@
+[versions]
+androidxCoreSplashscreen = "1.0.1"
+
+
+[libraries]
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidxCoreSplashscreen" }

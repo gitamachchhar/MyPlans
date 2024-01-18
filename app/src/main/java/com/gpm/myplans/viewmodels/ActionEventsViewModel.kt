@@ -57,3 +57,7 @@ class ActionEventsViewModel : ViewModel() {
         actionButtonsVisible.value = isVisible
     }
 }
+sealed interface MainActivityUiState {
+    data object Loading : MainActivityUiState
+}
+

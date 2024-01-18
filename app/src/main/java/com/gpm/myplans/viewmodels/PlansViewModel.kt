@@ -58,7 +58,9 @@ class PlansViewModel(private val plansRepository: PlansRepository) : ViewModel()
 
 
     suspend fun getPlanById(id: Int) : PlansEntity  {
+        Log.e("System out", "Yes 1")
         val request = viewModelScope.launch(Dispatchers.IO) {
+            Log.e("System out", "Yes 2")
             plansRepository.getPlanById(id)
                 .onStart {  _loadingData.update { true } }
                 .onCompletion {  _loadingData.update { false } }
@@ -66,6 +68,7 @@ class PlansViewModel(private val plansRepository: PlansRepository) : ViewModel()
                     planEntity = it
                 }
         }
+        Log.e("System out", "Yes 3")
         request.join()
         return planEntity
     }

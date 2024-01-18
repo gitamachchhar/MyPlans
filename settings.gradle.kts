@@ -11,7 +11,14 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
+
+    versionCatalogs {
+        create("libs") {
+            from(files("../MyPlans/libs.versions.toml"))
+        }
+    }
 }
 
 rootProject.name = "MyPlans"
 include(":app")
+include(":benchmark")

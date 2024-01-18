@@ -1,6 +1,7 @@
 package com.gpm.myplans.ui.compose
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -37,11 +38,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import com.gpm.myplans.R
@@ -52,8 +55,8 @@ import com.gpm.myplans.ui.compose.common.ComposeProgressBar
 import com.gpm.myplans.ui.compose.common.CustomAppBar
 import com.gpm.myplans.ui.compose.common.EmptyState
 import com.gpm.myplans.ui.compose.common.rememberLifecycleEvent
-import com.gpm.myplans.ui.theme.FFF3F3F3
 import com.gpm.myplans.ui.theme.PurpleGrey40
+import com.gpm.myplans.ui.theme.PurpleLight
 import com.gpm.myplans.ui.theme.labelMedium
 import com.gpm.myplans.ui.theme.labelSmall
 import com.gpm.myplans.viewmodels.ActionEventsViewModel
@@ -65,6 +68,7 @@ import org.koin.androidx.compose.viewModel
 
 private var selectedPlans = mutableListOf<Int>()
 
+@OptIn(ExperimentalComposeUiApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun PlansListScreen(
@@ -72,6 +76,7 @@ fun PlansListScreen(
     viewModel: PlansViewModel,
     onNextButtonClicked: () -> Unit = {},
 ) {
+
 
     // user action viewmodel
     val actionButtonViewModel: ActionEventsViewModel by viewModel()
@@ -112,6 +117,9 @@ fun PlansListScreen(
                 icon = { Icon(Icons.Filled.Add, contentDescription = "") },
                 text = { Text(text = stringResource(id = R.string.new_note)) }
             )
+        },
+        modifier = Modifier.semantics {
+            testTagsAsResourceId = true
         }
     ) {
         Box(
@@ -121,7 +129,11 @@ fun PlansListScreen(
         ) {
             if (planList.value.isNotEmpty()) {
                 PlansList(
-                    modifier = Modifier.align(Alignment.TopCenter),
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .semantics {
+                            testTagsAsResourceId = true
+                        },
                     list = planList.value,
                     onNextButtonClicked = onNextButtonClicked,
                     viewModel = viewModel,
@@ -145,7 +157,9 @@ fun PlansListScreen(
                 onClick = {
                 if (actionButtonViewModel.getEditMenuState().value) {
                     CoroutineScope(Dispatchers.Default).launch {
+                        Log.e("System out", "Yes 0")
                         val plan = viewModel.getPlanById(planList.value[selectedPlans[0]].id)
+                        Log.e("System out", "Yes 4")
                         plan.name = actionButtonViewModel.getDialogText().value
                         viewModel.updatePlanItems(plan)
                         actionButtonViewModel.run {
@@ -209,7 +223,9 @@ private fun PlansList(
         }
 
         LazyColumn(
-            modifier = modifier.fillMaxSize(),
+            modifier = modifier
+                .fillMaxSize()
+                .testTag("lc_myplans"),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             itemsIndexed(list) { index, plan ->
@@ -220,28 +236,26 @@ private fun PlansList(
                     isEnabled = isEnabled.value,
                     selectedItem = selectedItems.contains(index),
                     onClick = {
-                        selectedItems =
-                            if (selectedItems.contains(index))
-                                selectedItems.minus(index)
-                            else
-                                selectedItems.plus(index)
+                            selectedItems =
+                                if (selectedItems.contains(index))
+                                    selectedItems.minus(index)
+                                else
+                                    selectedItems.plus(index)
 
-                        selectedPlans = selectedItems.toMutableList()
+                            selectedPlans = selectedItems.toMutableList()
 
-                        if (selectedItems.isEmpty()) {
-                            selectAll = false
-                            actionButtonViewModel.setItemSelectionState(false)
-                        } else if (selectedItems.size == list.size) {
-                            selectAll = true
-                        }
-                        actionButtonViewModel.run {
-                            setEditMenuState(selectedItems.size == 1)
-                            setSelectDeleteMenusState(selectedItems.isNotEmpty())
-                        }
+                            if (selectedItems.isEmpty()) {
+                                selectAll = false
+                                actionButtonViewModel.setItemSelectionState(false)
+                            } else if (selectedItems.size == list.size) {
+                                selectAll = true
+                            }
+                            actionButtonViewModel.run {
+                                setEditMenuState(selectedItems.size == 1)
+                                setSelectDeleteMenusState(selectedItems.isNotEmpty())
+                            }
                     },
-                    onEnableChange = { value ->
-                        actionButtonViewModel.setItemSelectionState(value)
-                    }
+                    onEnableChange = actionButtonViewModel::setItemSelectionState
                 )
             }
         }
@@ -273,8 +287,8 @@ private fun PlansRowItem(
                 onNextButtonClicked()
             }),
         shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = BorderStroke(0.dp, FFF3F3F3),
+        colors = CardDefaults.cardColors(containerColor = PurpleLight),
+        border = BorderStroke(0.dp, PurpleLight),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
 
     ) {
